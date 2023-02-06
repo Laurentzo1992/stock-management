@@ -13,13 +13,14 @@ from django.core.paginator import Paginator
 
 
 def index(request):
-    sortiies = ProducStoct.objects.all().count()
+    sortiies = ProducStoct.objects.filter(mouvement__contains='Sortie', create_at__year=2023).count()
+    entrees = ProducStoct.objects.filter(mouvement__contains='Entre', create_at__year=2023).count()
     products = Product.objects.all().count()
     products_arletes = Product.objects.all()
     paginator = Paginator(products_arletes, 50)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    context={"products":products, "page_obj":page_obj, "sortiies":sortiies}
+    context={"products":products, "page_obj":page_obj, "sortiies":sortiies, "entrees":entrees}
     return render(request, 'gestion/index.html', context)
 
 
@@ -83,7 +84,7 @@ def vue(request, pk):
 
 
 def operation(request):
-    Operations = ProducStoct.objects.all().order_by('-id')
+    Operations = ProducStoct.objects.filter(mouvement__contains='Sortie').order_by('-id')
     paginator = Paginator(Operations, 8)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)

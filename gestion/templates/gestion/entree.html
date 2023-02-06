@@ -47,7 +47,7 @@
                     <div class="col-4  p-2">
                         <label for="article-1">Article</label>
                         <select name="product" class="form-control" id="article-1">
-                            <option> Choisir le type de vouement ... </option>
+                            <option> Choisir ... </option>
                             {% for product in products %}
                             <option value="{{product.id}}">{{forloop.counter}}-{{product.name}}</option>
                             {% endfor %}
