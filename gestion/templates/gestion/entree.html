@@ -9,8 +9,8 @@
             {% csrf_token %}
 
             <div class="col-12 p-2 mt-2 text-info font-weight-bold font-italic d-flex flex-column">
-                <label for="customer"> Services </label>
-                <select name="customer" class="form-control" id="customer">
+                <label for="service"> Services </label>
+                <select name="service" class="form-control" id="service">
                     <option>Choisir le service ... </option>
                     {% for service in services %}
                     <option value="{{service.id}}">{{forloop.counter}}-{{service.libelle}}</option>
@@ -19,8 +19,8 @@
             </div>
 
             <div class="col-12 p-2 mt-2 text-info font-weight-bold font-italic d-flex flex-column">
-                <label for="customer"> Responsable </label>
-                <select name="customer" class="form-control" id="customer">
+                <label for="demandeur"> Responsable </label>
+                <select name="demandeur" class="form-control" id="demandeur">
                     <option>Choisir le responsable ... </option>
                     {% for demandeur in demandeurs %}
                     <option value="{{demandeur.id}}">{{forloop.counter}}-{{demandeur.nom_prenom}}</option>
@@ -35,8 +35,8 @@
             </div>
 
             <div class="mt-2">
-              <button style= "font-size: 15px;" type="submit" class="btn btn-warning mb-3">
-                    <i class="fas fa-plus"></i>&nbsp;&nbsp; Valider
+              <button style= "font-size: 15px;" type="submit" class="btn btn-info mb-3">
+                    <i class="fas fa-plus"></i>&nbsp;&nbsp; <i class="fa-solid fa-floppy-disk"></i>
               </button>
             </div>
         </div>

@@ -40,6 +40,8 @@
                     <th>Code produit</th>
                     <th>Nom produit</th>
                     <th>Stock</th>
+                    <th>Stock de sécurité</th>
+                    <th>Stock d'alerte</th>
                     <th scope="col" style="width: 12%;">Action</th>
                 </tr>
             </thead>
@@ -56,6 +58,8 @@
                     <td>{{product_arlet.code}}</td>
                     <td>{{product_arlet.name}}</td>
                     <td>{{product_arlet.stock}}</td>
+                    <td>{{product_arlet.sec_stock}}</td>
+                    <td>{{product_arlet.alerte_stock}}</td>
                     <td>
                         <a href="{% url 'product_detail' product_arlet.id %}" class="btn btn-warning bg-warning text-center" title="Stock">
                             <i style="font-size: 15px;" class="fa-solid fa-arrow-right-arrow-left"></i>

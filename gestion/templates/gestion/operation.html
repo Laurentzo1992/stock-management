@@ -24,8 +24,8 @@
             <td>{{Operation.product.name}}</td>
             <td>{{Operation.product.unite.unit}}</td>
             <td>{{Operation.quantity}}</td>
-            <td>DFC</td>
-            <td>Henry Aline</td>
+            <td>{{Operation.service.libelle}}</td>
+            <td>{{Operation.demandeur.nom_prenom}}</td>
             <td>{{Operation.create_at}}</td>
         </tr>
         {% endfor %}

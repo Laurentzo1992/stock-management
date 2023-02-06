@@ -95,16 +95,16 @@ def product_plus_stock(request, pk):
     product = Product.objects.get(pk=pk)
     if request.method == 'POST':
         quantity = int(request.POST['quantity'])
-        mouvement = int(request.POST['mouvement'])
+        mouvement = request.POST['mouvement']
         if quantity >= 1:
             product.stock += quantity
-            messages.success(request, f'{quantity} ajouté à {product.name}')
+            messages.success(request, f'{quantity} {product.name} ajouté avec succès')
         else:
             messages.error(request, 'Veuillez verifiez la quantité sasie')
         product.save()
         ProducStoct.objects.create(product=product, quantity=quantity, mouvement=mouvement)
         return redirect('add_product')
-    return render(request, 'gestion/product_detail.html'), 
+    return render(request, 'gestion/product_detail.html')
 
 
 
@@ -112,29 +112,33 @@ def product_minus_stock(request, pk):
     product = Product.objects.get(pk=pk)
     if request.method == 'POST':
         quantity = int(request.POST['quantity'])
-        mouvement = int(request.POST['mouvement'])
+        mouvement = request.POST['mouvement']
+        demandeur = request.POST['demandeur']
+        service = request.POST['service']
         if quantity >= 1 and product.stock >= quantity:
             product.stock -= quantity
-            messages.success(request, f'{quantity} retiré à {product.name}')
+            messages.success(request, f'{quantity} {product.name} retiré')
         else:
             messages.error(request, 'Veuillez verifiez la quantité sasie et votre stock!')
         product.save()
-        ProducStoct.objects.create(product=product, quantity=quantity, mouvement=mouvement)
+        ProducStoct.objects.create(product=product, quantity=quantity, mouvement=mouvement, demandeur_id=demandeur, service_id=service)
         return redirect('add_product')
-    return render(request, 'gestion/product_detail2.html'), 
+    return render(request, 'gestion/product_detail2.html')
 
 
 
 
 def product_detail(request, pk):
     product = Product.objects.get(pk=pk)
-    movements = ProducStoct.objects.filter(product=product)
-    return render(request, 'gestion/product_detail.html', {'product': product, 'movements': movements})
+    demandeurs = FriendWork.objects.all()
+    services = Services.objects.all()
+    return render(request, 'gestion/product_detail.html', {'product': product, "demandeurs":demandeurs, "services":services})
 
 def product_detail2(request, pk):
     product = Product.objects.get(pk=pk)
-    movements = ProducStoct.objects.filter(product=product)
-    return render(request, 'gestion/product_detail2.html', {'product': product, 'movements': movements})
+    demandeurs = FriendWork.objects.all()
+    services = Services.objects.all()
+    return render(request, 'gestion/product_detail2.html', {'product': product, "demandeurs":demandeurs, "services":services})
 
 
 
