@@ -3,19 +3,35 @@
 {% block content %}
 
 <div class="container mb-5">
-      <form class="p-3 mt-2 myform" action="{% url 'entree'%}" method="post">
-      <div class="row mt-2 mb-2 p-2">
+    <form class="p-3 mt-2 myform" action="{% url 'sorti' %}" method="post">
+    <div class="row mt-2 mb-2 p-2">
         <div class="col-6 shadow-lg">
             {% csrf_token %}
 
             <div class="col-12 p-2 mt-2 text-info font-weight-bold font-italic d-flex flex-column">
-              <label for="service"> Services demandeur </label>
-              {{form.service}}
+                <label for="customer"> Services </label>
+                <select name="customer" class="form-control" id="customer">
+                    <option>Choisir le service ... </option>
+                    {% for service in services %}
+                    <option value="{{service.id}}">{{forloop.counter}}-{{service.libelle}}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="col-12 p-2 mt-2 text-info font-weight-bold font-italic d-flex flex-column">
-              <label for="demandeur"> Répresentant</label>
-              {{form.demandeur}}
+                <label for="customer"> Responsable </label>
+                <select name="customer" class="form-control" id="customer">
+                    <option>Choisir le responsable ... </option>
+                    {% for demandeur in demandeurs %}
+                    <option value="{{demandeur.id}}">{{forloop.counter}}-{{demandeur.nom_prenom}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+
+            <div class="col-12 p-2 mt-2 text-info font-weight-bold font-italic d-flex flex-column">
+                <label for="invoice"> Type de Mouvement </label>
+                <input required name="mouvement" value="Entre" type="text" readonly class="bg-secondary">
             </div>
 
             <div class="mt-2">
@@ -26,45 +42,106 @@
         </div>
 
         <div class="col-6 shadow-lg">
-              <div class="ligne row p-2 mt-2 text-info font-weight-bold font-italic" id="ligne">
-                <div class="col-4  p-2">
-                  <label for="product">Produit</label>
-                  {{form.product}}
+            <div id="wrapper">
+                <div class="ligne row p-2 mt-2 text-info font-weight-bold font-italic" id="ligne">
+                    <div class="col-4  p-2">
+                        <label for="article-1">Article</label>
+                        <select name="product" class="form-control" id="article-1">
+                            <option> Choisir le type de vouement ... </option>
+                            {% for product in products %}
+                            <option value="{{product.id}}">{{forloop.counter}}-{{product.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-4 p-2 text-info font-weight-bold font-italic">
+                        <label for="qty-1"> Quantité</label>
+                        <input required name="quantity" type="number" min="1" step="0.1" class="form-control" id="qty-1">
+            
+                    </div>
                 </div>
-                <div class="col-4 p-2 text-info font-weight-bold font-italic">
-                  <label for="quantity"> Quantité</label>
-                  {{form.quantity}}
-                </div>
-             </div>
+            </div>
 
-  
-              <div class="mt-2">
-                <button style= "font-size: 15px;" type="submit" class="btn btn-success mb-3">
-                      <i class="fas fa-plus"></i>&nbsp;&nbsp;
+            <div class="mt-2">
+                <button id="btn-add" style= "font-size: 15px;" class="btn btn-success mb-3">
+                    <i class="fas fa-plus"></i>&nbsp;&nbsp;
                 </button>
-              </div>
+
+                <button id="btn-remove" style= "font-size: 15px;" class="btn btn-success mb-3">
+                    <i class="fas fa-minus"></i>&nbsp;&nbsp;
+                </button>
+
+            </div>
         </div>
-      </div>
-      </form> 
+    </div>
+    </form> 
 </div>
 
 
-<script>
-  function updateFormIndex(form, index) {
-    [].forEach.call(form.elements, function(el) {
-      el.name = el.name.replace(/\d+/, index);
-    });
-  }
+<script type="text/javascript">
 
-  document.getElementById("add-form").addEventListener("click", function(e) {
-    e.preventDefault();
-    let formSet = document.getElementById("form-set");
-    let forms = formSet.getElementsByClassName("form");
-    let newForm = forms[0].cloneNode(true);
-    updateFormIndex(newForm, forms.length);
-    formSet.appendChild(newForm);
-  });
-</script>
+    // click to add new line item 
+    
+    $(document).on('click', '#btn-add', function(){
+        
+        var number = $('#wrapper').children().length + 1;
+    
+        let formAdd = `
+
+                        <div class="ligne row p-2 mt-2 text-info font-weight-bold font-italic" id="ligne">
+                            <div class="col-4  p-2">
+                                <label for="article-${number}">Article</label>
+                                <select name="product" class="form-control" id="article-${number}">
+                                    <option> Choisir le type de vouement ... </option>
+                                    {% for product in products %}
+                                    <option value="{{product.id}}">{{forloop.counter}}-{{product.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-4 p-2 text-info font-weight-bold font-italic">
+                                <label for="qty-${number}"> Quantité</label>
+                                <input required name="quantity" type="number" min="1" step="0.1" class="form-control" id="qty-${number}">
+                    
+                            </div>
+                        </div>
+
+
+                    `;   
+                    
+        
+        $("#wrapper:last").append(formAdd);          
+    })
+    
+    
+    // Remove last item line 
+    
+    $(document).on('click', '#btn-remove', function(){
+        $("#wrapper").children().last().remove();
+    })
+
+    {% comment %} // compute defferent totals 12
+
+    function handleChangeSingleArticle(id){
+
+        console.log(id.toString().split('-'))
+        let articleId = id.split('-')[1];
+
+        let idQty = `#qty-${articleId}`;
+
+        let unitId = `#unit-${articleId}`;
+
+        let totalIdLine = `#total-a-${articleId}`;
+
+        let totalLine = parseFloat($(idQty).val()) * parseFloat($(unitId).val());
+
+        $(totalIdLine).val(totalLine);
+
+        $('#total').val(parseFloat($('#total').val()) + totalLine);
+        
+    } {% endcomment %}
+
+// TODO This code is not completed you need to add a busness logic for changing in quantity and removving the last item line.    
+    
+    </script>
 
 {% endblock content %}
 

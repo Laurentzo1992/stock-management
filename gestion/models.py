@@ -61,6 +61,7 @@ class ProducStoct(models.Model):
 
     product = models.ForeignKey(Product, verbose_name='produit', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
+    mouvement = models.CharField(max_length=5, null=True, blank=True)
     service = models.ForeignKey(Services, verbose_name='Services', on_delete=models.CASCADE, null=True, blank=True)
     demandeur = models.ForeignKey(FriendWork, verbose_name='Demandeurs', on_delete=models.CASCADE, null=True, blank=True)
     create_at = models.DateField(auto_now_add=True)

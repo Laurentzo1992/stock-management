@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 User = get_user_model()
 from gestion.models import ProducStoct, Product, Unite, Direction, Services, FriendWork
 from .forms import ProductForm, StockForm
+from django.forms import formset_factory
 from  django.contrib import messages
 from django.http import JsonResponse, HttpResponseRedirect
 from django.core.paginator import Paginator
@@ -94,13 +95,14 @@ def product_plus_stock(request, pk):
     product = Product.objects.get(pk=pk)
     if request.method == 'POST':
         quantity = int(request.POST['quantity'])
+        mouvement = int(request.POST['mouvement'])
         if quantity >= 1:
             product.stock += quantity
             messages.success(request, f'{quantity} ajouté à {product.name}')
         else:
             messages.error(request, 'Veuillez verifiez la quantité sasie')
         product.save()
-        ProducStoct.objects.create(product=product, quantity=quantity)
+        ProducStoct.objects.create(product=product, quantity=quantity, mouvement=mouvement)
         return redirect('add_product')
     return render(request, 'gestion/product_detail.html'), 
 
@@ -110,13 +112,14 @@ def product_minus_stock(request, pk):
     product = Product.objects.get(pk=pk)
     if request.method == 'POST':
         quantity = int(request.POST['quantity'])
+        mouvement = int(request.POST['mouvement'])
         if quantity >= 1 and product.stock >= quantity:
             product.stock -= quantity
             messages.success(request, f'{quantity} retiré à {product.name}')
         else:
             messages.error(request, 'Veuillez verifiez la quantité sasie et votre stock!')
         product.save()
-        ProducStoct.objects.create(product=product, quantity=quantity)
+        ProducStoct.objects.create(product=product, quantity=quantity, mouvement=mouvement)
         return redirect('add_product')
     return render(request, 'gestion/product_detail2.html'), 
 
@@ -136,46 +139,52 @@ def product_detail2(request, pk):
 
 
 def entree(request):
+    demandeurs= FriendWork.objects.all()
+    services = Services.objects.all()
+    products = Product.objects.all()
+    StockFormset = formset_factory(forms.StockForm, extra=1)
+    formset = StockFormset()
     if request.method == 'POST':
         # formset = StockForm(request.POST, request.FILES)
         # mouvement = formset.cleaned_data.get('mouvement')
         # quantity = formset.cleaned_data.get('quantity')
         product = request.POST.get('product')
-        form = StockForm(request.POST, request.FILES)
-        if form.is_valid():
-            product.stock += form.cleaned_data['quantity']
-            product.save(commit=False)
-            form.save()
-            quant = form.cleaned_data.get('quantity')
-            nom_pro = form.cleaned_data.get('product')
+        formset = StockForm(request.POST, request.FILES)
+        if formset.is_valid():
+            for form in formset:
+                if form.cleaned_data:
+                    product.stock += form.cleaned_data['quantity']
+                    product.save(commit=False)
+                    form.save()
+                    quant = form.cleaned_data.get('quantity')
+                    nom_pro = form.cleaned_data.get('product')
             messages.success(request, f"Vous avez ajouté {quant} à l'artile {nom_pro} avec succes !")
             return HttpResponseRedirect('add_product')
-        else:
-            return render(request, 'gestion/add_product.html', {"form":form})
-    else:
-        form = StockForm()
-    return render(request, 'gestion/entree.html', {"form":form})
+    return render(request, 'gestion/entree.html', {"formset":formset, "demandeurs":demandeurs, "services":services, "products":products})
 
 
 
 def sorti(request):
+    demandeurs= FriendWork.objects.all()
+    services = Services.objects.all()
+    products = Product.objects.all()
+    StockFormset = formset_factory(forms.StockForm, extra=1)
+    formset = StockFormset()
     if request.method == 'POST':
         # formset = StockForm(request.POST, request.FILES)
         # mouvement = formset.cleaned_data.get('mouvement')
         # quantity = formset.cleaned_data.get('quantity')
-        form = StockForm(request.POST, request.FILES)
-        if form.is_valid():
-            product = form.save(commit=False)
-            product.quantity -= form.cleaned_data['quantity']
-            product.save()
-            quant = form.cleaned_data.get('quantity')
-            nom_pro = form.cleaned_data.get('product')
-            messages.success(request, f"Vous avez rétiré {quant} à l'artile {nom_pro} avec succes !")
+        product = request.POST.get('product')
+        formset = StockForm(request.POST, request.FILES)
+        if formset.is_valid():
+            for form in formset:
+                if form.cleaned_data:
+                    product.stock += form.cleaned_data['quantity']
+                    product.save(commit=False)
+                    form.save()
+                    quant = form.cleaned_data.get('quantity')
+                    nom_pro = form.cleaned_data.get('product')
+            messages.success(request, f"Vous avez retiré {quant} à l'artile {nom_pro} avec succes !")
             return HttpResponseRedirect('add_product')
-        else:
-            return render(request, 'gestion/add_product.html', {"form":form})
-    else:
-        form = StockForm()
-    return render(request, 'gestion/sorti.html', {"form":form})
-
+    return render(request, 'gestion/sorti.html', {"formset":formset, "demandeurs":demandeurs, "services":services, "products":products})
 
