@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mb-5">
+      <form class="p-3 mt-2 myform" action="{% url 'sorti' %}" method="post">
+      <div class="row mt-2 mb-2 p-2">
+        <div class="col-6 shadow-lg">
+            {% csrf_token %}
+
+            <div class="col-12 p-2 mt-2 text-info font-weight-bold font-italic d-flex flex-column">
+              <label for="service"> Services demandeur </label>
+              {{form.service}}
+            </div>
+
+            <div class="col-12 p-2 mt-2 text-info font-weight-bold font-italic d-flex flex-column">
+              <label for="demandeur"> Répresentant</label>
+              {{form.demandeur}}
+            </div>
+
+            <div class="mt-2">
+              <button style= "font-size: 15px;" type="submit" class="btn btn-warning mb-3">
+                    <i class="fas fa-plus"></i>&nbsp;&nbsp; Valider
+              </button>
+            </div>
+        </div>
+
+        <div class="col-6 shadow-lg">
+              <div class="ligne row p-2 mt-2 text-info font-weight-bold font-italic" id="ligne">
+                <div class="col-4  p-2">
+                  <label for="product">Produit</label>
+                  {{form.product}}
+                </div>
+                <div class="col-4 p-2 text-info font-weight-bold font-italic">
+                  <label for="quantity"> Quantité</label>
+                  {{form.quantity}}
+                </div>
+             </div>
+
+  
+              <div class="mt-2">
+                <button style= "font-size: 15px;" type="submit" class="btn btn-success mb-3">
+                      <i class="fas fa-plus"></i>&nbsp;&nbsp;
+                </button>
+              </div>
+        </div>
+      </div>
+      </form> 
+</div>
+
+
+<script>
+  function updateFormIndex(form, index) {
+    [].forEach.call(form.elements, function(el) {
+      el.name = el.name.replace(/\d+/, index);
+    });
+  }
+
+  document.getElementById("add-form").addEventListener("click", function(e) {
+    e.preventDefault();
+    let formSet = document.getElementById("form-set");
+    let forms = formSet.getElementsByClassName("form");
+    let newForm = forms[0].cloneNode(true);
+    updateFormIndex(newForm, forms.length);
+    formSet.appendChild(newForm);
+  });
+</script>
+
+{% endblock content %}
+
+
+
+
+

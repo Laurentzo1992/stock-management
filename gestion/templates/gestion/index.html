@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="container d-flex flex-column mb-5">
+    <div class="row">
+        <div class="col-4">
+            <div class="card text-bg-primary mb-5 mt-2 shadow-lg">
+                <div class="card-header text-white text-center text-uppercase font-weight-bold bg-secondary">Stock Global</div>
+                <div class="card-body">
+                <h1 class="card-title text-center text-secondary">{{products}}</h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card text-bg-primary mb-5 mt-2 shadow-lg">
+                <div class="card-header text-white text-center text-uppercase font-weight-bold bg-secondary">Transaction</div>
+                <div class="card-body">
+                <h1 class="card-title text-center text-secondary">{{sortiies}}</h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card text-bg-primary mb-5 mt-2 shadow-lg">
+                <div class="card-header text-white text-center text-uppercase font-weight-bold bg-secondary">Nombre d'entrée</div>
+                <div class="card-body">
+                <h1 class="card-title text-center text-secondary">00</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row text-center">
+        <h3 class="bg-secondary text-white">Etat d'alerte des articles</h3>
+    </div>
+    <div class="row">
+        <table id="example" class="display table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Arlerte</th>
+                    <th>Code produit</th>
+                    <th>Nom produit</th>
+                    <th>Stock</th>
+                    <th scope="col" style="width: 12%;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product_arlet in page_obj %}
+                {% if product_arlet.stock <= product_arlet.alerte_stock %}
+                <tr>
+                    <td>
+                        <button class="btn btn-secondary">
+                            <i style="font-size: 25px;" class="fa-solid fa-triangle-exclamation"></i>
+                        </button>
+                       
+                    </td>
+                    <td>{{product_arlet.code}}</td>
+                    <td>{{product_arlet.name}}</td>
+                    <td>{{product_arlet.stock}}</td>
+                    <td>
+                        <a href="{% url 'product_detail' product_arlet.id %}" class="btn btn-warning bg-warning text-center" title="Stock">
+                            <i style="font-size: 15px;" class="fa-solid fa-arrow-right-arrow-left"></i>
+                       </a>
+                        
+                        <a href="{% url 'vue' product_arlet.id %}" class="btn btn-info bg-info text-center" title="Stock">
+                            <i style="font-size: 15px;" class="fa-solid fa-eye"></i>
+                       </a>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="pagination">
+            <span class="step-links">
+                  {% if page_obj.has_previous %}
+                  <a href="?page=1">&laquo; suivant</a>
+                  <a href="?page={{ page_obj.previous_page_number }}">précédent</a>
+                  {% endif %}
+  
+            <span class="current">
+                  Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}.
+            </span>
+  
+            {% if page_obj.has_next %}
+                  <a href="?page={{ page_obj.next_page_number }}">suivant</a>
+                  <a href="?page={{ page_obj.paginator.num_pages }}">précédent &raquo;</a>
+            {% endif %}
+            </span>
+      </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+

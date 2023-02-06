@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+
+<div class="container mb-5">
+      <div class="row">
+            <div class="col-6">
+                  <form method="POST" class="card p-3 mt-2 myform bg-info" action="{% url 'add_product' %}" autocomplete="off"> 
+                  {% csrf_token %}
+
+                        <div class="row p-2">
+                              <label for="number"> Code </label>
+                              {{form.code}}
+                        </div>
+
+                        <div class="row p-2">
+                              <label for="number"> Libelle </label>
+                              {{form.name}}
+                        </div>
+                        
+                        <div class="row p-2">
+                              <label for="number">Unité </label>
+                              {{form.unite}}
+                        </div>
+                        <div class="row p-2">
+                              <label for="number">Stock initial </label>
+                              {{form.stock}}
+                        </div>
+                        <div class="row p-2">
+                              <div class="col-6 p-2">
+                                    <label for="number"> Stock d'Alerte </label>
+                                    {{form.alerte_stock}}
+                              </div>
+                              <div class="col-6 p-2">
+                                    <label for="number"> Stock de Sécurité </label>
+                                    {{form.sec_stock}}
+                              </div>
+                        </div>
+
+                        <div class="mt-2">
+                              <button style= "font-size: 15px;" type="submit" class="btn btn-warning mb-3">
+                                    <i class="fas fa-plus"></i>&nbsp;&nbsp; Valider
+                              </button>
+                              <a style= "font-size: 15px;" href="{% url 'add_product' %}" type="button" class="btn btn-danger mb-3 ms-2" style="wdith: 50px;" title="Close">
+                                    <i class="fas fa-times"></i>
+                              </a>
+                        </div> 
+                  </form>
+            </div>
+            <div class="col-6">
+                  <table id="example" class="display table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Code produit</th>
+                                <th>Nom produit</th>
+                                <th>Stock</th>
+                                <th>Alerte</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                              {% for product in page_obj %}
+                            <tr>
+                                <td>{{product.code}}</td>
+                                <td>{{product.name}}</td>
+                                <td>{{product.stock}}</td>
+                                {% if product.stock <= product.alerte_stock %}
+                                <td class="bg-danger">{{product.alerte_stock}}</td>
+                                {% else %}
+                                <td>{{product.alerte_stock}}</td>
+                                {% endif %}
+                                <td>
+                                    <a href="{% url 'product_detail' product.id %}" class="btn btn-info bg-info text-center" title="Ajout Stock">
+                                          <i style="font-size: 15px;" class="fa-solid fa-cart-plus"></i>
+                                    </a> 
+                                    <a href="{% url 'product_detail2' product.id %}" class="btn btn-success bg-success text-center" title="Retrait Stock">
+                                          <i style="font-size: 15px;" class="fa-solid fa-minus"></i>
+                                    </a>
+
+                                    {% comment %} <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
+                                          <i style="font-size: 15px;" class="fa-solid fa-arrow-right-arrow-left"></i>
+                                    </button> {% endcomment %}
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                  </table>
+                  <div class="pagination">
+                        <span class="step-links">
+                              {% if page_obj.has_previous %}
+                              <a href="?page=1">&laquo; suivant</a>
+                              <a href="?page={{ page_obj.previous_page_number }}">précédent</a>
+                              {% endif %}
+              
+                        <span class="current">
+                              Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}.
+                        </span>
+              
+                        {% if page_obj.has_next %}
+                              <a href="?page={{ page_obj.next_page_number }}">suivant</a>
+                              <a href="?page={{ page_obj.paginator.num_pages }}">précédent &raquo;</a>
+                        {% endif %}
+                        </span>
+                  </div>
+            </div>
+
+      </div>
+ </div>
+{% endblock content %}
+
+
+
+           
+   
+

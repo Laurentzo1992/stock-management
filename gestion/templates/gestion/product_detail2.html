@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mb-5">
+  <div class="row">
+    <div class="col-6">
+      <div class="col-12"> <h4>Produit : {{ product.name }} </h4></div>
+      <div class="col-12"> <h4>Stock Actuel: {{ product.stock }} </h4></div>
+      <form class="card p-3 mt-2 myform" action="{% url 'product_minus_stock' product.id %}" method="post">
+          {% csrf_token %}
+          <div class="col-12 p-2">
+            <label for="number"> Quantité</label>
+            <input type="number" name="quantity" placeholder="quantité" min="0">
+          </div>
+          <div class="col-12 p-2">
+            <button style= "font-size: 15px;" type="submit" class="btn btn-warning mb-3">
+            <i class="fas fa-plus"></i>&nbsp;&nbsp; Valider
+        </button>
+          </div>
+      </form> 
+    </div>
+  </div>
+</div>
+
+
+<script>
+  function updateFormIndex(form, index) {
+    [].forEach.call(form.elements, function(el) {
+      el.name = el.name.replace(/\d+/, index);
+    });
+  }
+
+  document.getElementById("add-form").addEventListener("click", function(e) {
+    e.preventDefault();
+    let formSet = document.getElementById("form-set");
+    let forms = formSet.getElementsByClassName("form");
+    let newForm = forms[0].cloneNode(true);
+    updateFormIndex(newForm, forms.length);
+    formSet.appendChild(newForm);
+  });
+</script>
+
+{% endblock content %}
+
+
+
+
+

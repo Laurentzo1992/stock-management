@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+<div class="container-fluid">
+
+<table id="example" class="display table table-striped table-hover" style="width:100%">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Nom produit</th>
+            <th>Unité</th>
+            <th>Quantité</th>
+            <th>Services Recepteur</th>
+            <th>Receveur</th>
+            <th>Date de l'Operation</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for Operation in page_obj %}
+        <tr>
+            <td>{{Operation.product.code}}</td>
+            <td>{{Operation.product.name}}</td>
+            <td>{{Operation.product.unite.unit}}</td>
+            <td>{{Operation.quantity}}</td>
+            <td>DFC</td>
+            <td>Henry Aline</td>
+            <td>{{Operation.create_at}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="pagination">
+    <span class="step-links">
+          {% if page_obj.has_previous %}
+          <a href="?page=1">&laquo; suivant</a>
+          <a href="?page={{ page_obj.previous_page_number }}">précédent</a>
+          {% endif %}
+
+    <span class="current">
+          Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}.
+    </span>
+
+    {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">suivant</a>
+          <a href="?page={{ page_obj.paginator.num_pages }}">précédent &raquo;</a>
+    {% endif %}
+    </span>
+</div>
+
+{% endblock content %}
+
+

@@ -1,0 +1,114 @@
+{% load bootstrap5 %}
+{% load static %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+{% load django_htmx %}
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link rel="shortcut icon" href="{% static 'images/app_img/favicon_.ico' %}" type="image/x-icon">
+        <link rel="icon" href="{% static 'images/app_img/favicon_.ico' %}" type="image/x-icon">
+        <title>Login</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        <!-- Our project just needs Font Awesome Free's Solid and Brand files -->
+        <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+        <script src="{% static 'fontawesomefree/js/fontawesome.js' %}"></script>
+        <script src="{% static 'fontawesomefree/js/solid.js' %}"></script>
+        <script src="{% static 'fontawesomefree/js/brands.js' %}"></script>
+        <script src="{% static 'fontawesomefree/js/all.min.js' %}"></script>
+        <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+        <!-- jquery cdn and js  local files -->
+        <script src="{% static 'js/scripts.js' %}"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+        </head>
+    <body>
+        
+        {% block navb %}
+        
+        <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light shadow-lg mb-3 bg-body rounded opacity-75">
+            <div class="container-fluid">
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+                <a class="navbar-brand text-primary" href="{% url 'index' %}"><img src="{% static 'images/app_img/logo.png' %}" class="rounded shadow-lg opacity-100" alt="logo app"width="100" height="50"></a>
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                    <h4><a class="nav-link text-success" aria-current="page" href="{% url 'add_product' %}">Produit</a></h4>
+                  </li>
+                  <li class="nav-item">
+                    <h4><a class="nav-link text-success" aria-current="page" href="{% url 'entree' %}">Entrés</a></h4>
+                  </li>
+                  <li class="nav-item">
+                    <h4><a class="nav-link text-success" aria-current="page" href="{% url 'sorti' %}">Sorties</a></h4>
+                  </li>
+                  <li class="nav-item">
+                    <h4><a class="nav-link text-success" aria-current="page" href="{% url 'operation' %}">Operation</a></h4>
+                  </li>
+                </ul>
+                <form class="d-flex">
+                  {% if user.is_authenticated %} 
+                  <h5 class="text-success mx-4">{{request.user.first_name}}</h5>
+                  {% endif %}
+                    <input class="form-control me-2" type="search" placeholder="recherchez ici" aria-label="Search">
+                    <div class="dropdown dropstart">
+                      <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-user"></i>
+                      </button>
+                      <ul class="dropdown-menu bg-secondary">
+                        <li><a class="dropdown-item text-white" href="#">changer son mot de passe</a></li>
+                        <li><a class="dropdown-item bg-danger text-white" href="{% url 'logout_user' %}">logout</a></li>
+                      </ul>
+                    </div>
+                </form>
+              </div>
+            </div>
+          </nav>
+        {% endblock navb %}
+
+        
+
+        {% block content %}
+        
+        
+
+        {% endblock content %}
+        
+        
+        {% block footer %}
+        <div class="container shadow-lg bg-body-tertiary rounded">
+          <footer class="py-1">
+            <div class="d-flex flex-column flex-sm-row justify-content-between py-1 my-1 border-top border-success border-5">
+              <p class="text-secondary font-weight-bold font-italic">&copy; {% now "D-d-M-Y" %} Company, Inc. All rights reserved</p>
+              <ul class="list-unstyled d-flex">
+                <li class="ms-3"><a class="text-muted" href="#"><i class="fa-brands fa-facebook" style="font-size: 100%; color: blue;"></i></a></li>
+                <li class="ms-3"><a class="text-muted" href="#"><i class="fa-brands fa-twitter" style="font-size: 100%; color: yellowgreen;"></i></a></li>
+                <li class="ms-3"><a class="text-muted" href="#"><i class="fa-brands fa-whatsapp" style="font-size: 100%; color: green;"></i></a></li>
+                <li class="ms-3"><a class="text-muted" href="#"><i class="fa-brands fa-linkedin" style="font-size: 100%; color: bluesky;"></i></a></li>
+              </ul>
+            </div>
+          </footer>
+        </div>
+        {% endblock footer %}
+
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    {% django_htmx_script %}
+
+    </body>
+</html>
