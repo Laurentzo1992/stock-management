@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block navb %}{% endblock navb %}
+
+{% block content %}
+<hr>
+ <table id="example" class="display table table-striped table-hover border-1">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Article</th>
+            <th>Stock</th>
+            <th>Unité</th>
+            <th>Stock alerte</th>
+            <th>Stock Sécurité</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for article in articles %}
+        <tr>
+            <td>{{article.code}}</td>
+            <td>{{article.name}}</td>
+            <td>{{article.stock}}</td>
+            <td>{{article.unite}}</td>
+            <td>{{article.alerte_stock}}</td>
+            <td>{{article.alerte_stock}}</td>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock content %}
+
+
+{% block footer %}{% endblock footer %}
+
+
+ 
+
+
+
+
+
+
+
+

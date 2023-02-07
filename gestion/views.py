@@ -1,5 +1,4 @@
 from . import forms
-from django.conf import settings
 from django.shortcuts import redirect, render
 from django.contrib.auth import login, authenticate, logout, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -11,9 +10,17 @@ from  django.contrib import messages
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse, FileResponse
 from django.core.paginator import Paginator
 from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import A3, A5, A4, A6, A7, A8, B5, B1, B2, B3, B4, B6, B7
+from reportlab.lib.utils import ImageReader
+from reportlab.lib.pagesizes import letter
 from io import BytesIO
 import io, csv
 from django.template.loader import get_template
+from xhtml2pdf import pisa
+from django.contrib.staticfiles import finders
+from django.views.generic import ListView
+
 
 
 def index(request):
@@ -199,29 +206,96 @@ def sorti(request):
 
 
 
-def generate_pdf(request):
-    operations = ProducStoct.objects.filter(mouvement__contains='Sortie')
-    template = get_template('gestion/bon.html')
-    context = {'operations': operations}
+def pdf_view(request, pk):
+     
+    #create a byttestream buffer
+    buf = io.BytesIO()
+    #create a canvas
+    c = canvas.Canvas(buf, pagesize=B7, bottomup=0)
+    #create text oject
+    textob = c.beginText()
+    textob.setTextOrigin(inch, inch)
+    textob.setFont("Helvetica", 10)
+   
+    operation = ProducStoct.objects.get(pk=pk)
+    Prenom = request.user.first_name
+    Nom = request.user.last_name
     
+    textob.textLine("Code article ===> " + operation.product.code)
+    textob.textLine(" ")
+    textob.textLine("Nom de l'artile ===> " +operation.product.name)
+    textob.textLine(" ")
+    textob.textLine("Type de mouvement ===> " + operation.mouvement)
+    textob.textLine(" ")
+    textob.textLine("Quantité demandé ===> " + str(operation.quantity))
+    textob.textLine(" ")
+    textob.textLine("Services receveur ===> " + str(operation.service.direction.sigle))
+    textob.textLine(" ")
+    textob.textLine("---------------------------------------")
+    #textob.textLine("Responsable : " + operation.demandeur.nom_prenom + "               " + "Operateur : " + Prenom + " " + Nom)
+    textob.textLine("Responsable : " + operation.demandeur.nom_prenom)
+    textob.textLine(" ")
+    textob.textLine(" ")
+    textob.textLine(" ")
+    textob.textLine(" ")
+    textob.textLine(" ")
+    textob.textLine("Operateur : " + Prenom + " " + Nom)
+    
+    c.drawText(textob)
+    c.showPage()
+    c.save()
+    buf.seek(0)
+    
+    #return something
+    return FileResponse(buf, as_attachment=False, filename='bon.pdf')
+
+
+
+def approvisionement(request, pk):
+    article = Product.objects.get(pk=pk)
+    template_path = 'gestion/approvisionement.html'
+    context = {'article':article}
+    # Create a Django response object, and specify content_type as pdf
+    response = HttpResponse(content_type='application/pdf')
+    #if you want to dowload
+    response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+    #if you want to display only
+    response['Content-Disposition'] = 'filename="report.pdf"'
+    # find the template and render it.
+    template = get_template(template_path)
     html = template.render(context)
-    pdf_file = BytesIO()
-    pdf = canvas.Canvas(pdf_file)
-    pdf.drawString(100, 750, "Liste des sorties")
-    pdf.drawString(100, 700, html)
-    pdf.save()
-    pdf_file.seek(0)
-    return FileResponse(pdf_file, as_attachment=True, filename='bon.pdf')
 
-def some_view(request):
-    # Create the HttpResponse object with the appropriate CSV header.
-    response = HttpResponse(
-        content_type='text/csv',
-        headers={'Content-Disposition': 'attachment; filename="somefilename.csv"'},
-    )
-
-    writer = csv.writer(response)
-    writer.writerow(['First row', 'Foo', 'Bar', 'Baz'])
-    writer.writerow(['Second row', 'A', 'B', 'C', '"Testing"', "Here's a quote"])
-
+    # create a pdf
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    # if error then show some funny view
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
+
+
+
+def liste(request):
+    articles = Product.objects.all()
+    template_path = 'gestion/articles.html'
+    context = {'articles':articles}
+    # Create a Django response object, and specify content_type as pdf
+    response = HttpResponse(content_type='application/pdf')
+    #if you want to dowload
+    response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+    #if you want to display only
+    response['Content-Disposition'] = 'filename="report.pdf"'
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # create a pdf
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    # if error then show some funny view
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
+
+
+

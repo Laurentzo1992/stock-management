@@ -52,11 +52,16 @@
                   <table id="example" class="display table table-striped table-hover">
                         <thead>
                             <tr>
-                                <th>Code produit</th>
-                                <th>Nom produit</th>
+                                <th>Code</th>
+                                <th>Article</th>
                                 <th>Stock</th>
                                 <th>Alerte</th>
-                                <th scope="col">Action</th>
+                                <th style="width: 150px;">
+                                    Action
+                                    <a href="{% url 'liste' %}" class="btn btn-secondary bg-secondary text-center" title="Liste générale">
+                                          <i style="font-size: 15px;" class="fa-solid fa-print"></i>
+                                    </a>
+                              </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -76,6 +81,9 @@
                                     </a> 
                                     <a href="{% url 'product_detail2' product.id %}" class="btn btn-success bg-success text-center" title="Retrait Stock">
                                           <i style="font-size: 15px;" class="fa-solid fa-minus"></i>
+                                    </a>
+                                    <a href="{% url 'approvisionement' product.id %}" class="btn btn-secondary bg-secondary text-center" title="Bon d'approvisionemment">
+                                          <i style="font-size: 15px;" class="fa-solid fa-print"></i>
                                     </a>
 
                                     {% comment %} <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#formModal">

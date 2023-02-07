@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block navb %}{% endblock navb %}
+
+{% block content %}
+
+ <table id="example" class="display table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Article</th>
+            <th>Stock</th>
+            <th>Alerte</th>
+            <th style="width: 150px;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{article.code}}</td>
+            <td>{{article.name}}</td>
+            <td>{{article.stock}}</td>
+            <td>{{article.unite}}</td>
+            <td>{{article.alerte_stock}}</td>
+            <td>{{article.alerte_stock}}</td>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+{% endblock content %}
+
+
+{% block footer %}{% endblock footer %}
+
+
+ 
+
+
+
+
+
+
+
+
