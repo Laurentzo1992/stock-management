@@ -8,8 +8,9 @@ from gestion.models import ProducStoct, Product, Unite, Direction, Services, Fri
 from .forms import ProductForm, StockForm
 from django.forms import formset_factory
 from  django.contrib import messages
-from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse, FileResponse
 from django.core.paginator import Paginator
+from reportlab.pdfgen import canvas
 
 
 def index(request):
@@ -195,6 +196,12 @@ def sorti(request):
 
 
 
-def boncommande(request):
-    return HttpResponseRedirect('bon_commande')
+def generate_pdf(request):
+    # Générez la réponse
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="hello.pdf"'
+    # Créez le canvas pour dessiner sur le PDF
+    canvas_obj = canvas.Canvas(response)
+    # Écrivez du texte sur le canvas
+    canvas_obj.drawString(72, 720, "Hello World")
 
