@@ -16,27 +16,6 @@
           <div class="col-12 p-2">
             <input type="hidden" name="mouvement" value="Entre" readonly class="bg-secondary">
           </div>
-
-          {% comment %} <div class="col-12 p-2">
-            <label for="service"> Services </label>
-            <select name="service" class="form-control" id="service">
-              <option>Choisir le service ... </option>
-              {% for service in services %}
-              <option value="{{service.id}}">{{forloop.counter}}-{{service.libelle}}</option>
-              {% endfor %}
-          </select>
-          </div> {% endcomment %}
-
-          {% comment %} <div class="col-12 p-2">
-            <label for="demandeur"> Responsable </label>
-            <select name="demandeur" class="form-control" id="demandeur">
-                <option>Choisir le responsable ... </option>
-                {% for demandeur in demandeurs %}
-                <option value="{{demandeur.id}}">{{forloop.counter}}-{{demandeur.nom_prenom}}</option>
-                {% endfor %}
-            </select>
-          </div> {% endcomment %}
-
           <div class="col-12 p-2">
             <button style= "font-size: 15px;" type="submit" class="btn btn-warning mb-3">
               <i class="fas fa-plus"></i>&nbsp;&nbsp; Valider
@@ -48,7 +27,7 @@
 </div>
 
 
-<script>
+{% comment %} <script>
   function updateFormIndex(form, index) {
     [].forEach.call(form.elements, function(el) {
       el.name = el.name.replace(/\d+/, index);
@@ -63,7 +42,7 @@
     updateFormIndex(newForm, forms.length);
     formSet.appendChild(newForm);
   });
-</script>
+</script> {% endcomment %}
 
 {% endblock content %}
 

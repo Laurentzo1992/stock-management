@@ -8,7 +8,7 @@ from gestion.models import ProducStoct, Product, Unite, Direction, Services, Fri
 from .forms import ProductForm, StockForm
 from django.forms import formset_factory
 from  django.contrib import messages
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.core.paginator import Paginator
 
 
@@ -192,4 +192,9 @@ def sorti(request):
             messages.success(request, f"Vous avez retiré {quant} à l'artile {nom_pro} avec succes !")
             return HttpResponseRedirect('add_product')
     return render(request, 'gestion/sorti.html', {"formset":formset, "demandeurs":demandeurs, "services":services, "products":products})
+
+
+
+def boncommande(request):
+    return HttpResponseRedirect('bon_commande')
 

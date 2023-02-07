@@ -7,19 +7,19 @@
     <div class="col-6">
       <div class="col-12"> <h4>Article : {{ product.name }} </h4></div>
       <div class="col-12"> <h4>{{ product.stock }} En Stock</h4></div>
-      <form class="card p-3 mt-2 myform" action="{% url 'product_minus_stock' product.id %}" method="post">
+      <form onsubmit="return validateForm()" class="card p-3 mt-2 myform" action="{% url 'product_minus_stock' product.id %}" method="post">
           {% csrf_token %}
           <div class="col-12 p-2">
             <label for="number"> Quantité</label>
-            <input type="number" name="quantity" placeholder="quantité" min="0">
+            <input type="number" name="quantity" placeholder="quantité" min="0" required>
           </div>
           <div class="col-12 p-2">
             <input type="hidden" name="mouvement" value="Sortie" readonly class="bg-secondary">
           </div>
           <div class="col-12 p-2">
             <label for="service"> Services </label>
-            <select name="service" class="form-control" id="service">
-              <option>Choisir le service ... </option>
+            <select required name="service" class="form-control" id="service">
+              <option value="">Choisir le service ... </option>
               {% for service in services %}
               <option value="{{service.id}}">{{forloop.counter}}-{{service.libelle}}</option>
               {% endfor %}
@@ -28,8 +28,8 @@
 
           <div class="col-12 p-2">
             <label for="demandeur"> Responsable </label>
-            <select name="demandeur" class="form-control" id="demandeur">
-                <option>Choisir le responsable ... </option>
+            <select required name="demandeur" class="form-control" id="demandeur">
+                <option value="">Choisir le responsable ... </option>
                 {% for demandeur in demandeurs %}
                 <option value="{{demandeur.id}}">{{forloop.counter}}-{{demandeur.nom_prenom}}</option>
                 {% endfor %}
@@ -45,24 +45,6 @@
     </div>
   </div>
 </div>
-
-
-<script>
-  function updateFormIndex(form, index) {
-    [].forEach.call(form.elements, function(el) {
-      el.name = el.name.replace(/\d+/, index);
-    });
-  }
-
-  document.getElementById("add-form").addEventListener("click", function(e) {
-    e.preventDefault();
-    let formSet = document.getElementById("form-set");
-    let forms = formSet.getElementsByClassName("form");
-    let newForm = forms[0].cloneNode(true);
-    updateFormIndex(newForm, forms.length);
-    formSet.appendChild(newForm);
-  });
-</script>
 
 {% endblock content %}
 
