@@ -11,6 +11,7 @@ urlpatterns = [
     path('operation', views.operation, name='operation'),
     path('entree', views.entree, name='entree'),
     path('sorti', views.sorti, name='sorti'),
+    path('some_view', views.some_view, name='some_view'),
     path('generate_pdf', views.generate_pdf, name='generate_pdf'),
     path('product_detail/<int:pk>', views.product_detail, name='product_detail'),
     path('product_detail2/<int:pk>', views.product_detail2, name='product_detail2'),

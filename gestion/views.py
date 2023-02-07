@@ -11,6 +11,9 @@ from  django.contrib import messages
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse, FileResponse
 from django.core.paginator import Paginator
 from reportlab.pdfgen import canvas
+from io import BytesIO
+import io, csv
+from django.template.loader import get_template
 
 
 def index(request):
@@ -197,11 +200,28 @@ def sorti(request):
 
 
 def generate_pdf(request):
-    # Générez la réponse
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="hello.pdf"'
-    # Créez le canvas pour dessiner sur le PDF
-    canvas_obj = canvas.Canvas(response)
-    # Écrivez du texte sur le canvas
-    canvas_obj.drawString(72, 720, "Hello World")
+    operations = ProducStoct.objects.filter(mouvement__contains='Sortie')
+    template = get_template('gestion/bon.html')
+    context = {'operations': operations}
+    
+    html = template.render(context)
+    pdf_file = BytesIO()
+    pdf = canvas.Canvas(pdf_file)
+    pdf.drawString(100, 750, "Liste des sorties")
+    pdf.drawString(100, 700, html)
+    pdf.save()
+    pdf_file.seek(0)
+    return FileResponse(pdf_file, as_attachment=True, filename='bon.pdf')
 
+def some_view(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(
+        content_type='text/csv',
+        headers={'Content-Disposition': 'attachment; filename="somefilename.csv"'},
+    )
+
+    writer = csv.writer(response)
+    writer.writerow(['First row', 'Foo', 'Bar', 'Baz'])
+    writer.writerow(['Second row', 'A', 'B', 'C', '"Testing"', "Here's a quote"])
+
+    return response
