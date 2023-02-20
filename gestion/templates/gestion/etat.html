@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row m-5">
+            <div class="row text-center">
+                <h3 class="bg-warning text-white">Etat des sorties par services </h3>
+            </div>
+            {% for service__libelle, etats_by_service__libelle in grouped_etats.items %}
+            <h4 class="font-italic text-bold text-center text-info border-2 border-bottom border-dark">{{ service__libelle }}</h4>
+            <table id="example" class="display table table-striped table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>article</th>
+                        <th>Nbr Operation</th>
+                        <th>Quantité reçu</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for etat in etats_by_service__libelle %}
+                    <tr>
+                        <td>{{etat.product__name}}</td>
+                        <td>{{etat.total}}</td>
+                        <td>{{etat.quantite}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endfor %}
+    </div>
+</div>
+{% endblock content %}
+
+

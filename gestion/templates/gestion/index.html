@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col-4">
             <div class="card text-bg-primary mb-5 mt-2 shadow-lg">
-                <div class="card-header text-white text-center text-uppercase font-weight-bold bg-secondary">Stock Global</div>
+                <div class="card-header text-white text-center text-uppercase font-weight-bold bg-secondary">Article en stock</div>
                 <div class="card-body">
                 <h1 class="card-title text-center text-secondary"><i class="fa-solid fa-cart-plus" style="color: #f5ef34;"></i>&nbsp;&nbsp;&nbsp;&nbsp; {{products}}</h1>
                 </div>
@@ -34,15 +34,15 @@
         <h3 class="bg-secondary text-white">Etat d'alerte des articles</h3>
     </div>
     <div class="row">
-        <table id="example" class="display table table-striped table-hover">
+        <table id="example" class="display table table-striped table-hover text-center">
             <thead>
                 <tr>
                     <th>Arlerte</th>
                     <th>Code produit</th>
                     <th>Nom produit</th>
                     <th>Stock</th>
+                    <th>Stock d'alerte </th>
                     <th>Stock de sécurité</th>
-                    <th>Stock d'alerte</th>
                     <th scope="col" style="width: 12%;">Action</th>
                 </tr>
             </thead>
@@ -59,10 +59,18 @@
                     <td>{{product_arlet.code}}</td>
                     <td>{{product_arlet.name}}</td>
                     <td>{{product_arlet.stock}}</td>
-                    <td>{{product_arlet.sec_stock}}</td>
+                    {% if product_arlet.stock <= product_arlet.alerte_stock %}
+                    <td class="bg-warning">{{product_arlet.alerte_stock}}</td>
+                    {% else %}
                     <td>{{product_arlet.alerte_stock}}</td>
+                    {% endif %}
+                    {% if product_arlet.stock <= product_arlet.sec_stock %}
+                    <td class="bg-danger">{{product_arlet.sec_stock}}</td>
+                    {% else %}
+                    <td>{{product_arlet.sec_stock}}</td>
+                    {% endif %}
                     <td>
-                        <a href="{% url 'product_detail' product_arlet.id %}" class="btn btn-warning bg-warning text-center" title="Stock">
+                        <a href="{% url 'product_detail' product_arlet.id %}" class="btn btn-success bg-success text-center" title="Stock">
                             <i style="font-size: 15px;" class="fa-solid fa-arrow-right-arrow-left"></i>
                        </a>
                         

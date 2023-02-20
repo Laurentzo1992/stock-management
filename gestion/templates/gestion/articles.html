@@ -1,16 +1,18 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block navb %}{% endblock navb %}
 
 {% block content %}
+<div class="row">
+    <img src="static/images/app_img/logo.png">
+</div>
 <hr>
- <table id="example" class="display table table-striped table-hover border-1">
+ <table id="example" class="display table table-striped table-hover border-1 text-center">
     <thead>
         <tr>
             <th>Code</th>
             <th>Article</th>
             <th>Stock</th>
-            <th>Unité</th>
             <th>Stock alerte</th>
             <th>Stock Sécurité</th>
         </tr>
@@ -21,7 +23,6 @@
             <td>{{article.code}}</td>
             <td>{{article.name}}</td>
             <td>{{article.stock}}</td>
-            <td>{{article.unite}}</td>
             <td>{{article.alerte_stock}}</td>
             <td>{{article.alerte_stock}}</td>
             </td>

@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="container mb-5">
-    <form class="p-3 mt-2 myform" action="{% url 'sorti' %}" method="post">
+    <form class="p-3 mt-2 myform" action="{% url 'entree' %}" method="post">
     <div class="row mt-2 mb-2 p-2">
         <div class="col-6 shadow-lg">
             {% csrf_token %}
@@ -30,7 +30,7 @@
 
 
             <div class="col-12 p-2 mt-2 text-info font-weight-bold font-italic d-flex flex-column">
-                <label for="invoice"> Type de Mouvement </label>
+                <label for="mouvement"> Type de Mouvement </label>
                 <input required name="mouvement" value="Entre" type="text" readonly class="bg-secondary">
             </div>
 

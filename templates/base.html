@@ -16,7 +16,9 @@
         <title>Login</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" type="text/css" href={% static "css/bootstrap.min.css"%}>
+        <link rel="stylesheet" type="text/css" href={% static "DataTables/datatables.min.css"%}/>
         <!-- Our project just needs Font Awesome Free's Solid and Brand files -->
         <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
         <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
@@ -29,16 +31,18 @@
         <!-- jquery cdn and js  local files -->
         <script src="{% static 'js/scripts.js' %}"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <!-- Latest compiled and minified CSS -->
+        <!-- Latest compiled and minified CSS --> 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <!-- Latest compiled JavaScript -->
+        <!-- Latest compiled JavaScript --> 
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous" />
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
-        </head>
+        </head> 
     <body>
-        
         {% block navb %}
-        
+        <h6 class="bg-info text-center text-white">Tél : +226 77505873 </h6>
         <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light shadow-lg mb-3 bg-body rounded opacity-75">
             <div class="container-fluid">
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +54,7 @@
                   <li class="nav-item">
                     <a class="nav-link text-success" aria-current="page" href="{% url 'add_product' %}">Produit</a>
                   </li>
-                  <li class="nav-item">
+                   <li class="nav-item">
                     <a class="nav-link text-success" aria-current="page" href="{% url 'entree' %}">Entrés</a>
                   </li>
                   <li class="nav-item">
@@ -58,6 +62,12 @@
                   </li>
                   <li class="nav-item">
                     <a class="nav-link text-success" aria-current="page" href="{% url 'operation' %}">Operation</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link text-success" aria-current="page" href="{% url 'etat' %}">Etat</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link text-success" aria-current="page" href="{% url 'statistique' %}">Statistique</a>
                   </li>
                 </ul>
                 <form class="d-flex">
@@ -70,7 +80,7 @@
                         <i class="fa-solid fa-user"></i>
                       </button>
                       <ul class="dropdown-menu bg-secondary">
-                        <li><a class="dropdown-item text-white" href="#">changer son mot de passe</a></li>
+                        <li><a class="dropdown-item text-white" href="{% url 'change_password' %}">changer son mot de passe</a></li>
                         <li><a class="dropdown-item bg-danger text-white" href="{% url 'logout_user' %}">logout</a></li>
                       </ul>
                     </div>
@@ -107,8 +117,22 @@
 
     <script src="{% static 'js/htmx.min.js' %}" defer></script>
     <script src="{% static 'js/scripts.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script> 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <!-- bootstrap5 js--> 
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}" ></script>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+     <!-- jquery--> 
+     <script type="text/javascript" src="{% static 'js/jquery.min.js' %}" ></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <!-- Datatables JS static --> 
+    <script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}"></script>
+    <!-- Datatables JS cdn -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.12.1/b-2.2.3/b-html5-2.2.3/b-print-2.2.3/datatables.min.js"></script> 
+
     {% django_htmx_script %}
 
     </body>

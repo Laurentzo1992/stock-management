@@ -1,0 +1,25 @@
+.global-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+form {
+    padding-top: 10px;
+    font-size: 14px;
+    margin-top: 30px;
+}
+
+.login-form {
+    width: 380px;
+    height: 450px;
+    margin: 20px;
+    background: rgb(238, 95, 47) !important;
+    border-radius: 10px;
+}
+
+.card-title {
+    font-weight: 900;
+    padding-top: 20px;
+}

@@ -1,41 +1,41 @@
 {% extends 'base.html' %}
 
 {% block navb %} {% endblock navb %}
-
+{% load static %}
 
 
 {% block content %}
 
-<main class="form-signin w-50 m-auto d-flex-column">
-        <form method="post" class="d-flex-column align-items-center">
-          {% csrf_token %}
-          <h1 class="h3 ms-5 mt-5 fw-normal text-success text-center">Connection</h1>
-      
-          <div class="form-floating  mb-4 mx-2">
-            <input type="text" name="username" class="form-control" id="floatingInput" placeholder="user01">
-            <label for="floatingInput">Username</label>
-          </div>
-          <div class="form-floating  mb-5 mx-2">
-            <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password">
-            <label for="floatingPassword">Password</label>
-          </div>
-          <button class="btn btn-lg btn-primary mx-2" type="submit">Connecter</button>
-        </form>
-        {% if message %}
+<div class="global-container">
+  {% if message %}
         <div class="alert alert-warning alert-dismissible fade show bg-danger" role="alert">
           <strong class="text-white">{{message}}!</strong>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        {% endif %}
-      </main>
-      
-    <div class="spinner">
-        <div class="rect1"></div>
-        <div class="rect2"></div>
-        <div class="rect3"></div>
-        <div class="rect4"></div>
-        <div class="rect5"></div>
+  {% endif %}
+  <div class="card login-form">
+    <div class="card-body">
+      <h1 class="card-title text-center text-white"><img src="{% static 'images/app_img/logo.png' %}" class="w-25">CCI-BF</h1>
+      <div class="card-text">
+        <form method="post" class="form-actions form-check form-control form-control-border">
+          {% csrf_token %}
+          <div class="form-group text-success font-italic font-weight-bold">
+            <label for="exampleInputEmail1">Username</label>
+            <input type="text" name="username" id="exampleInputEmail1" class="form-control form-control-sm bg-success p-2">
+          </div>
+          <div class="form-group text-success font-italic font-weight-bold">
+            <label for="exampleInputPassword1">Pasword</label>
+            {% comment %} <a href="" style="float: right; font-size: 12px;">Mot de pass oublié?</a> {% endcomment %}
+            <input type="password" name="password" id="exampleInputPassword1" class="form-control form-control-sm bg-success p-2">
+          </div>
+          <button type="submit" class="btn btn-primary btn-bloc"> Connexion</button>
+        </form>
+      </div>
     </div>
+  </div>
+</div>
+        
+      
 
 {% endblock content %}
 

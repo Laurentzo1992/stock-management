@@ -1,32 +1,43 @@
 from . import forms
+from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import redirect, render
-from django.contrib.auth import login, authenticate, logout, get_user_model
+from django.contrib.auth import login, authenticate, logout, get_user_model, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 User = get_user_model()
 from gestion.models import ProducStoct, Product, Unite, Direction, Services, FriendWork
 from .forms import ProductForm, StockForm
 from django.forms import formset_factory
 from  django.contrib import messages
-from django.http import JsonResponse, HttpResponseRedirect, HttpResponse, FileResponse
+from django.http import HttpResponseRedirect, HttpResponse, FileResponse, JsonResponse
 from django.core.paginator import Paginator
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import A3, A5, A4, A6, A7, A8, B5, B1, B2, B3, B4, B6, B7
-from reportlab.lib.utils import ImageReader
-from reportlab.lib.pagesizes import letter
 from io import BytesIO
 import io, csv
 from django.template.loader import get_template
 from xhtml2pdf import pisa
-from django.contrib.staticfiles import finders
-from django.views.generic import ListView
+from django.db.models import Count, Sum
 
 
 
+def search(request):
+    query = request.GET.get('q')
+    results = Product.objects.filter(code__icontains=query)
+    data = []
+    for result in results:
+        data.append({
+            'code': result.code,
+            'url': result.get_absolute_url(),
+        })
+    return JsonResponse({'data': data})
+
+
+@login_required
 def index(request):
     sortiies = ProducStoct.objects.filter(mouvement__contains='Sortie', create_at__year=2023).count()
     entrees = ProducStoct.objects.filter(mouvement__contains='Entre', create_at__year=2023).count()
-    products = Product.objects.all().count()
+    products = Product.objects.filter(stock__gt = 0).count()
     products_arletes = Product.objects.all()
     paginator = Paginator(products_arletes, 50)
     page_number = request.GET.get('page')
@@ -69,9 +80,31 @@ def logout_user(request):
     return redirect('login_user')
 
 
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Votre mot à été changé avec succès')
+            return redirect('index')
+        else:
+            messages.error(request, 'Erreur veuillez verifiez vos identifiants antérieurs')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'gestion/change_password.html', {
+        'form': form
+    })
+    
+    
+    
+
+@login_required
 def add_product(request):
-    products = Product.objects.all()
-    paginator = Paginator(products, 10)
+    products = Product.objects.all().order_by('-id')
+    paginator = Paginator(products, 8)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     if request.method=="POST":
@@ -83,17 +116,18 @@ def add_product(request):
             messages.success(request, f"L'élément {nom_pro} code {pro_code}  ajouté avec succes !")
             return HttpResponseRedirect('add_product')
         else:
+            messages.error(request, "Veuillez verifiez svp l'article existe déja!!")
             return render(request, 'gestion/add_product.html', {"form":form, "page_obj":page_obj})
     else:
         form = ProductForm()
         return render(request, 'gestion/add_product.html', {"form":form, "page_obj":page_obj})
     
-
+@login_required
 def vue(request, pk):
     product_arlet = Product.objects.get(pk=pk)
     return render(request, 'gestion/vue.html', {"product_arlet":product_arlet})
 
-
+@login_required
 def operation(request):
     Operations = ProducStoct.objects.filter(mouvement__contains='Sortie').order_by('-id')
     paginator = Paginator(Operations, 8)
@@ -102,7 +136,7 @@ def operation(request):
     context={"page_obj":page_obj}
     return render(request, 'gestion/operation.html', context)
 
-
+@login_required
 def product_plus_stock(request, pk):
     product = Product.objects.get(pk=pk)
     if request.method == 'POST':
@@ -119,7 +153,7 @@ def product_plus_stock(request, pk):
     return render(request, 'gestion/product_detail.html')
 
 
-
+@login_required
 def product_minus_stock(request, pk):
     product = Product.objects.get(pk=pk)
     if request.method == 'POST':
@@ -139,13 +173,15 @@ def product_minus_stock(request, pk):
 
 
 
-
+@login_required
 def product_detail(request, pk):
     product = Product.objects.get(pk=pk)
     demandeurs = FriendWork.objects.all()
     services = Services.objects.all()
     return render(request, 'gestion/product_detail.html', {'product': product, "demandeurs":demandeurs, "services":services})
 
+
+@login_required
 def product_detail2(request, pk):
     product = Product.objects.get(pk=pk)
     demandeurs = FriendWork.objects.all()
@@ -153,59 +189,27 @@ def product_detail2(request, pk):
     return render(request, 'gestion/product_detail2.html', {'product': product, "demandeurs":demandeurs, "services":services})
 
 
-
+@login_required
 def entree(request):
     demandeurs= FriendWork.objects.all()
     services = Services.objects.all()
     products = Product.objects.all()
     StockFormset = formset_factory(forms.StockForm, extra=1)
     formset = StockFormset()
-    if request.method == 'POST':
-        # formset = StockForm(request.POST, request.FILES)
-        # mouvement = formset.cleaned_data.get('mouvement')
-        # quantity = formset.cleaned_data.get('quantity')
-        product = request.POST.get('product')
-        formset = StockForm(request.POST, request.FILES)
-        if formset.is_valid():
-            for form in formset:
-                if form.cleaned_data:
-                    product.stock += form.cleaned_data['quantity']
-                    product.save(commit=False)
-                    form.save()
-                    quant = form.cleaned_data.get('quantity')
-                    nom_pro = form.cleaned_data.get('product')
-            messages.success(request, f"Vous avez ajouté {quant} à l'artile {nom_pro} avec succes !")
-            return HttpResponseRedirect('add_product')
     return render(request, 'gestion/entree.html', {"formset":formset, "demandeurs":demandeurs, "services":services, "products":products})
 
 
-
+@login_required
 def sorti(request):
     demandeurs= FriendWork.objects.all()
     services = Services.objects.all()
     products = Product.objects.all()
     StockFormset = formset_factory(forms.StockForm, extra=1)
     formset = StockFormset()
-    if request.method == 'POST':
-        # formset = StockForm(request.POST, request.FILES)
-        # mouvement = formset.cleaned_data.get('mouvement')
-        # quantity = formset.cleaned_data.get('quantity')
-        product = request.POST.get('product')
-        formset = StockForm(request.POST, request.FILES)
-        if formset.is_valid():
-            for form in formset:
-                if form.cleaned_data:
-                    product.stock += form.cleaned_data['quantity']
-                    product.save(commit=False)
-                    form.save()
-                    quant = form.cleaned_data.get('quantity')
-                    nom_pro = form.cleaned_data.get('product')
-            messages.success(request, f"Vous avez retiré {quant} à l'artile {nom_pro} avec succes !")
-            return HttpResponseRedirect('add_product')
     return render(request, 'gestion/sorti.html', {"formset":formset, "demandeurs":demandeurs, "services":services, "products":products})
 
 
-
+@login_required
 def pdf_view(request, pk):
      
     #create a byttestream buffer
@@ -250,7 +254,7 @@ def pdf_view(request, pk):
     return FileResponse(buf, as_attachment=False, filename='bon.pdf')
 
 
-
+@login_required
 def approvisionement(request, pk):
     article = Product.objects.get(pk=pk)
     template_path = 'gestion/approvisionement.html'
@@ -274,7 +278,7 @@ def approvisionement(request, pk):
     return response
 
 
-
+@login_required
 def liste(request):
     articles = Product.objects.all()
     template_path = 'gestion/articles.html'
@@ -282,7 +286,7 @@ def liste(request):
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
     #if you want to dowload
-    response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+    #response['Content-Disposition'] = 'attachment; filename="report.pdf"'
     #if you want to display only
     response['Content-Disposition'] = 'filename="report.pdf"'
     # find the template and render it.
@@ -296,6 +300,46 @@ def liste(request):
     if pisa_status.err:
        return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
+
+
+@login_required
+def etat(request):
+    Operations = ProducStoct.objects.filter(mouvement__contains='Sortie').order_by('-id')
+    paginator = Paginator(Operations, 8)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    etats = ProducStoct.objects.filter(mouvement__contains='Sortie').values('product__name', 'service__libelle').annotate(total=Count('product'), quantite=Sum('quantity'))
+    grouped_etats = {}
+    for etat in etats:
+        service__libelle = etat['service__libelle']
+        if service__libelle not in grouped_etats:
+            grouped_etats[service__libelle] = []
+        grouped_etats[service__libelle].append({
+        'product__name': etat['product__name'],
+        'total': etat['total'],
+        'quantite': etat['quantite']
+    })
+    context={"page_obj":page_obj, "grouped_etats":grouped_etats}
+    return render(request, 'gestion/etat.html', context)
+
+
+
+@login_required
+def statistique(request):
+    etats = ProducStoct.objects.filter(mouvement__contains='Sortie').values('product__name', 'service__libelle').annotate(total=Count('product'), quantite=Sum('quantity'))
+    barres = etats.count()
+    grouped_etats = {}
+    for etat in etats:
+        service__libelle = etat['service__libelle']
+        if service__libelle not in grouped_etats:
+            grouped_etats[service__libelle] = []
+        grouped_etats[service__libelle].append({
+        'product__name': etat['product__name'],
+        'total': etat['total'],
+        'quantite': etat['quantite']
+    })
+    context={"etats":etats, "grouped_etats":grouped_etats, "barres":barres}
+    return render(request, 'gestion/statistique.html', context)
 
 
 

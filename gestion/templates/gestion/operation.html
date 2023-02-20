@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container-fluid">
 
-<table id="example" class="display table table-striped table-hover" style="width:100%">
+<table id="example" class="display table table-striped table-hover text-center">
     <thead>
         <tr>
             <th>Code</th>
@@ -24,8 +24,16 @@
             <td>{{Operation.product.name}}</td>
             <td>{{Operation.mouvement}}</td>
             <td>{{Operation.quantity}}</td>
+            {% if Operation.service.libelle %}
             <td>{{Operation.service.libelle}}</td>
+            {% else %}
+            <td>-------</td>
+            {% endif %}
+            {% if Operation.demandeur.nom_prenom %}
             <td>{{Operation.demandeur.nom_prenom}}</td>
+            {% else %}
+            <td>-------</td>
+            {% endif %}
             <td>{{Operation.create_at}}</td>
             <td>
                 <a class="nav-link text-success" aria-current="page" href="{% url 'pdf_view' Operation.id %}">
